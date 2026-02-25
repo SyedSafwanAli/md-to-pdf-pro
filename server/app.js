@@ -123,8 +123,9 @@ async function start() {
     // Share the browser instance with all route handlers
     app.locals.browser = browser;
 
-    const server = app.listen(PORT, () => {
-      console.log(`[server] Running on port ${PORT} (${process.env.NODE_ENV || 'development'})`);
+    // Listen on 0.0.0.0 so Render (and other cloud platforms) can reach the server
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[server] Running on 0.0.0.0:${PORT} (${process.env.NODE_ENV || 'development'})`);
     });
 
     // -----------------------------------------------------------------------

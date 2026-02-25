@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: markpdf-server
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    plan: starter          # 512 MB RAM minimum; upgrade to "standard" for heavy load
+    region: oregon
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: ALLOWED_ORIGINS
+        sync: false        # Set this manually in Render dashboard (your frontend URL)
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 50
+      - key: PDF_TIMEOUT_MS
+        value: 60000       # bumped to 60s for Render's cold starts
