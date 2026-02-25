@@ -4,7 +4,7 @@ services:
     runtime: docker
     dockerfilePath: ./server/Dockerfile
     dockerContext: ./server
-    plan: starter          # 512 MB RAM minimum; upgrade to "standard" for heavy load
+    plan: free
     region: oregon
     envVars:
       - key: NODE_ENV

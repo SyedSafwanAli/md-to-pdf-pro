@@ -115,8 +115,19 @@ async function start() {
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
+        '--disable-dev-shm-usage',   // use /tmp instead of /dev/shm (free tier fix)
         '--disable-gpu',
+        '--single-process',           // biggest RAM saver on free tier
+        '--no-zygote',                // skip zygote process — saves ~50 MB
+        '--disable-extensions',
+        '--disable-background-networking',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--hide-scrollbars',
+        '--mute-audio',
+        '--no-first-run',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
       ],
     });
 
