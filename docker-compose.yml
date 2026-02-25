@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  # ── Backend — Express + Puppeteer ──────────────────────────────────────
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: markpdf-server
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      ALLOWED_ORIGINS: http://localhost
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX: 50
+      PDF_TIMEOUT_MS: 30000
+    # server/.env can override the above values at runtime
+    env_file:
+      - ./server/.env
+    expose:
+      - "5000"        # internal only — the client Nginx proxies to this
+    networks:
+      - markpdf-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', r => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Frontend — React (Nginx) ────────────────────────────────────────────
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: markpdf-client
+    restart: unless-stopped
+    ports:
+      - "80:80"       # access the app at http://localhost
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - markpdf-net
+
+networks:
+  markpdf-net:
+    driver: bridge
